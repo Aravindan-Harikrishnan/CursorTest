@@ -1,0 +1,72 @@
+/* Appian Expression Rule: AI_AnalyzeResume 
+   This rule integrates with your AI Skill to analyze resume content
+   and return job recommendations */
+
+rule!AI_AnalyzeResume(
+  resumeText: ri!resumeText,
+  candidateId: ri!candidateId
+)
+
+/* Input Parameters:
+   - resumeText (Text): The resume content to analyze
+   - candidateId (Integer): The candidate's unique identifier
+   
+   Returns: Dictionary with job recommendations */
+
+a!localVariables(
+  /* Call your AI Skill here */
+  local!aiResponse: rule!CALL_AI_SKILL_ResumeAnalysis(
+    skillId: cons!AI_SKILL_RESUME_ANALYZER,
+    input: {
+      resumeContent: ri!resumeText,
+      candidateProfile: rule!GET_CandidateProfile(ri!candidateId),
+      jobDatabase: rule!GET_ActiveJobPostings(),
+      analysisParameters: {
+        includeSkillMatching: true,
+        includeSalaryMatching: true,
+        includeLocationPreferences: true,
+        maxRecommendations: 10,
+        minimumMatchThreshold: 60
+      }
+    }
+  ),
+  
+  /* Process AI response and format for UI */
+  local!formattedJobs: a!forEach(
+    items: local!aiResponse.recommendations,
+    expression: {
+      jobId: fv!item.jobId,
+      jobName: fv!item.jobTitle,
+      department: fv!item.department,
+      location: fv!item.workLocation,
+      matchingSkills: fv!item.skillsMatched,
+      matchScore: round(fv!item.compatibilityScore, 0),
+      jobDescription: fv!item.roleDescription,
+      requirements: fv!item.keyRequirements,
+      salaryRange: fv!item.compensationRange,
+      employmentType: fv!item.employmentType,
+      urgency: fv!item.hiringUrgency,
+      benefits: fv!item.benefitsPackage,
+      remoteFriendly: fv!item.remoteWorkOptions,
+      experienceLevel: fv!item.requiredExperience
+    }
+  ),
+  
+  /* Return structured response */
+  {
+    success: local!aiResponse.success,
+    jobRecommendations: local!formattedJobs,
+    analysisInsights: {
+      totalJobsAnalyzed: local!aiResponse.metadata.jobsProcessed,
+      topSkillsIdentified: local!aiResponse.candidateAnalysis.primarySkills,
+      experienceLevel: local!aiResponse.candidateAnalysis.experienceLevel,
+      recommendedImprovements: local!aiResponse.candidateAnalysis.suggestions,
+      industryAlignment: local!aiResponse.candidateAnalysis.industryFit
+    },
+    errorMessage: if(
+      local!aiResponse.success,
+      null,
+      local!aiResponse.errorDetails
+    )
+  }
+)
