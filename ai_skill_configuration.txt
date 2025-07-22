@@ -1,0 +1,313 @@
+/* Appian AI Skill Configuration for Resume Analysis
+   This file contains the configuration setup for the AI Skill integration */
+
+/* AI Skill Input Schema */
+{
+  "skillName": "ResumeJobMatcher",
+  "description": "Analyzes resumes and recommends matching job opportunities",
+  "version": "1.0",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "resumeContent": {
+        "type": "string",
+        "description": "Complete resume text content",
+        "required": true
+      },
+      "candidateProfile": {
+        "type": "object",
+        "properties": {
+          "candidateId": {"type": "integer"},
+          "preferences": {
+            "type": "object",
+            "properties": {
+              "desiredSalaryMin": {"type": "number"},
+              "desiredSalaryMax": {"type": "number"},
+              "preferredLocations": {"type": "array", "items": {"type": "string"}},
+              "remoteWork": {"type": "boolean"},
+              "willingToRelocate": {"type": "boolean"}
+            }
+          }
+        }
+      },
+      "jobDatabase": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "jobId": {"type": "integer"},
+            "jobTitle": {"type": "string"},
+            "department": {"type": "string"},
+            "location": {"type": "string"},
+            "requiredSkills": {"type": "array", "items": {"type": "string"}},
+            "preferredSkills": {"type": "array", "items": {"type": "string"}},
+            "experienceLevel": {"type": "string"},
+            "salaryRange": {
+              "type": "object",
+              "properties": {
+                "min": {"type": "number"},
+                "max": {"type": "number"}
+              }
+            },
+            "jobDescription": {"type": "string"},
+            "requirements": {"type": "array", "items": {"type": "string"}},
+            "benefits": {"type": "array", "items": {"type": "string"}},
+            "isRemote": {"type": "boolean"},
+            "urgency": {"type": "string", "enum": ["LOW", "MEDIUM", "HIGH"]},
+            "employmentType": {"type": "string", "enum": ["FULL_TIME", "PART_TIME", "CONTRACT", "INTERNSHIP"]}
+          }
+        }
+      },
+      "analysisParameters": {
+        "type": "object",
+        "properties": {
+          "includeSkillMatching": {"type": "boolean", "default": true},
+          "includeSalaryMatching": {"type": "boolean", "default": true},
+          "includeLocationPreferences": {"type": "boolean", "default": true},
+          "maxRecommendations": {"type": "integer", "default": 10},
+          "minimumMatchThreshold": {"type": "integer", "default": 60, "minimum": 0, "maximum": 100}
+        }
+      }
+    }
+  },
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "success": {"type": "boolean"},
+      "recommendations": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "jobId": {"type": "integer"},
+            "jobTitle": {"type": "string"},
+            "department": {"type": "string"},
+            "workLocation": {"type": "string"},
+            "skillsMatched": {"type": "array", "items": {"type": "string"}},
+            "skillsGap": {"type": "array", "items": {"type": "string"}},
+            "compatibilityScore": {"type": "number", "minimum": 0, "maximum": 100},
+            "roleDescription": {"type": "string"},
+            "keyRequirements": {"type": "array", "items": {"type": "string"}},
+            "compensationRange": {"type": "string"},
+            "employmentType": {"type": "string"},
+            "hiringUrgency": {"type": "string"},
+            "benefitsPackage": {"type": "array", "items": {"type": "string"}},
+            "remoteWorkOptions": {"type": "boolean"},
+            "requiredExperience": {"type": "string"},
+            "matchingReasons": {"type": "array", "items": {"type": "string"}},
+            "developmentOpportunities": {"type": "array", "items": {"type": "string"}}
+          }
+        }
+      },
+      "candidateAnalysis": {
+        "type": "object",
+        "properties": {
+          "primarySkills": {"type": "array", "items": {"type": "string"}},
+          "experienceLevel": {"type": "string"},
+          "industryFit": {"type": "string"},
+          "strengthAreas": {"type": "array", "items": {"type": "string"}},
+          "improvementAreas": {"type": "array", "items": {"type": "string"}},
+          "suggestions": {"type": "array", "items": {"type": "string"}},
+          "careerPath": {"type": "string"},
+          "salaryExpectation": {
+            "type": "object",
+            "properties": {
+              "estimatedRange": {"type": "string"},
+              "confidence": {"type": "number"}
+            }
+          }
+        }
+      },
+      "metadata": {
+        "type": "object",
+        "properties": {
+          "processingTime": {"type": "number"},
+          "jobsProcessed": {"type": "integer"},
+          "analysisTimestamp": {"type": "string"},
+          "modelVersion": {"type": "string"},
+          "confidence": {"type": "number"}
+        }
+      },
+      "errorDetails": {"type": "string"}
+    }
+  }
+}
+
+/* Sample AI Skill Prompt Template */
+SYSTEM_PROMPT = """
+You are an expert HR AI assistant specializing in resume analysis and job matching. Your task is to:
+
+1. Analyze the provided resume content to extract:
+   - Skills (technical and soft skills)
+   - Experience level and years
+   - Education background
+   - Industry experience
+   - Career progression
+   - Achievements and accomplishments
+
+2. Match the candidate profile against available job opportunities by:
+   - Scoring skill compatibility (0-100%)
+   - Evaluating experience level alignment
+   - Considering location preferences
+   - Assessing salary expectations
+   - Analyzing career fit
+
+3. Provide detailed recommendations including:
+   - Top job matches with explanations
+   - Skill gaps and development suggestions
+   - Career advancement opportunities
+   - Industry insights and trends
+
+4. Return results in the specified JSON format with accurate match scores and detailed reasoning.
+
+Guidelines:
+- Be thorough but concise in analysis
+- Provide actionable insights and suggestions
+- Consider both hard and soft skills
+- Account for career growth potential
+- Maintain professional and encouraging tone
+"""
+
+USER_PROMPT_TEMPLATE = """
+Please analyze this resume and recommend suitable job opportunities:
+
+RESUME CONTENT:
+{resumeContent}
+
+CANDIDATE PREFERENCES:
+{candidateProfile}
+
+AVAILABLE JOBS:
+{jobDatabase}
+
+ANALYSIS PARAMETERS:
+{analysisParameters}
+
+Please provide a comprehensive analysis with job recommendations, match scores, and improvement suggestions.
+"""
+
+/* Appian Integration Constants */
+cons!AI_SKILL_RESUME_ANALYZER = "ai-skill-resume-job-matcher"
+cons!AI_SKILL_TIMEOUT = 30 /* seconds */
+cons!AI_SKILL_MAX_RETRIES = 3
+cons!AI_SKILL_CACHE_DURATION = 300 /* 5 minutes */
+
+/* Expression Rule: CALL_AI_SKILL_ResumeAnalysis */
+rule!CALL_AI_SKILL_ResumeAnalysis(
+  skillId: ri!skillId,
+  input: ri!input
+)
+
+a!localVariables(
+  local!startTime: now(),
+  
+  /* Validate input parameters */
+  local!validation: rule!VALIDATE_AISkillInput(ri!input),
+  
+  if(
+    local!validation.isValid,
+    /* Proceed with AI Skill call */
+    a!localVariables(
+      local!aiResult: a!aiSkill(
+        skillId: ri!skillId,
+        input: ri!input,
+        timeout: cons!AI_SKILL_TIMEOUT
+      ),
+      
+      /* Process and validate AI response */
+      local!processedResult: rule!PROCESS_AISkillResponse(
+        response: local!aiResult,
+        inputData: ri!input,
+        processingTime: interval(local!startTime, now())
+      ),
+      
+      /* Cache successful results */
+      if(
+        local!processedResult.success,
+        rule!CACHE_AISkillResult(
+          key: rule!GENERATE_CacheKey(ri!input),
+          result: local!processedResult,
+          duration: cons!AI_SKILL_CACHE_DURATION
+        ),
+        {}
+      ),
+      
+      local!processedResult
+    ),
+    
+    /* Return validation error */
+    {
+      success: false,
+      recommendations: {},
+      candidateAnalysis: {},
+      metadata: {},
+      errorDetails: local!validation.errorMessage
+    }
+  )
+)
+
+/* Performance Monitoring Rules */
+rule!LOG_AISkillPerformance(
+  skillId: ri!skillId,
+  processingTime: ri!processingTime,
+  success: ri!success,
+  inputSize: ri!inputSize,
+  outputSize: ri!outputSize
+)
+
+/* This logs performance metrics for monitoring and optimization */
+rule!WRITE_TO_DataStore(
+  dataStore: cons!DS_AI_SKILL_METRICS,
+  entity: "AISkillUsage",
+  data: {
+    skillId: ri!skillId,
+    timestamp: now(),
+    processingTimeMs: ri!processingTime,
+    success: ri!success,
+    inputSizeBytes: ri!inputSize,
+    outputSizeBytes: ri!outputSize,
+    userId: loggedInUser()
+  }
+)
+
+/* Error Handling and Retry Logic */
+rule!RETRY_AISkillCall(
+  skillId: ri!skillId,
+  input: ri!input,
+  maxRetries: ri!maxRetries: cons!AI_SKILL_MAX_RETRIES
+)
+
+a!localVariables(
+  local!attempts: 0,
+  local!success: false,
+  local!result: {},
+  
+  /* Retry loop */
+  while(
+    and(local!attempts < ri!maxRetries, not(local!success)),
+    a!localVariables(
+      local!attempts: local!attempts + 1,
+      local!currentResult: rule!CALL_AI_SKILL_ResumeAnalysis(
+        skillId: ri!skillId,
+        input: ri!input
+      ),
+      local!success: local!currentResult.success,
+      local!result: local!currentResult,
+      
+      /* Wait before retry if failed */
+      if(
+        and(not(local!success), local!attempts < ri!maxRetries),
+        rule!WAIT(seconds: local!attempts * 2), /* Exponential backoff */
+        {}
+      )
+    )
+  ),
+  
+  /* Add retry information to result */
+  local!result & {
+    metadata: local!result.metadata & {
+      retryAttempts: local!attempts,
+      finalAttempt: local!success
+    }
+  }
+)
