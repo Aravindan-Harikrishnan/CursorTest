@@ -1,0 +1,622 @@
+{
+  a!columnsLayout(
+    columns: {
+      a!columnLayout(
+        contents: {
+          /* ===== HEADER SECTION - KPI CARDS ===== */
+          a!cardLayout(
+            contents: {
+              a!richTextDisplayField(
+                value: a!richTextItem(
+                  text: "HR Dashboard - Key Performance Indicators",
+                  size: "LARGE",
+                  style: "STRONG"
+                ),
+                align: "CENTER"
+              )
+            },
+            style: "ACCENT",
+            marginBelow: "STANDARD"
+          ),
+          
+          /* First Row of KPI Cards */
+          a!columnsLayout(
+            columns: {
+              a!columnLayout(
+                contents: {
+                  a!cardLayout(
+                    contents: {
+                      a!richTextDisplayField(
+                        value: {
+                          a!richTextItem(
+                            text: "Active Job Roles",
+                            size: "MEDIUM",
+                            style: "STRONG"
+                          ),
+                          char(10),
+                          a!richTextItem(
+                            text: rule!HR_GetActiveJobRolesCount(),
+                            size: "LARGE",
+                            style: "STRONG",
+                            color: "POSITIVE"
+                          )
+                        },
+                        align: "CENTER"
+                      )
+                    },
+                    style: "INFO",
+                    height: "SHORT"
+                  )
+                },
+                width: "NARROW"
+              ),
+              a!columnLayout(
+                contents: {
+                  a!cardLayout(
+                    contents: {
+                      a!richTextDisplayField(
+                        value: {
+                          a!richTextItem(
+                            text: "Inactive Job Roles",
+                            size: "MEDIUM",
+                            style: "STRONG"
+                          ),
+                          char(10),
+                          a!richTextItem(
+                            text: rule!HR_GetInactiveJobRolesCount(),
+                            size: "LARGE",
+                            style: "STRONG",
+                            color: "SECONDARY"
+                          )
+                        },
+                        align: "CENTER"
+                      )
+                    },
+                    style: "WARN",
+                    height: "SHORT"
+                  )
+                },
+                width: "NARROW"
+              ),
+              a!columnLayout(
+                contents: {
+                  a!cardLayout(
+                    contents: {
+                      a!richTextDisplayField(
+                        value: {
+                          a!richTextItem(
+                            text: "Temporary Hire Vacancies",
+                            size: "MEDIUM",
+                            style: "STRONG"
+                          ),
+                          char(10),
+                          a!richTextItem(
+                            text: rule!HR_GetTemporaryVacanciesCount(),
+                            size: "LARGE",
+                            style: "STRONG",
+                            color: "ACCENT"
+                          )
+                        },
+                        align: "CENTER"
+                      )
+                    },
+                    style: "ACCENT",
+                    height: "SHORT"
+                  )
+                },
+                width: "NARROW"
+              ),
+              a!columnLayout(
+                contents: {
+                  a!cardLayout(
+                    contents: {
+                      a!richTextDisplayField(
+                        value: {
+                          a!richTextItem(
+                            text: "Permanent Hire Vacancies",
+                            size: "MEDIUM",
+                            style: "STRONG"
+                          ),
+                          char(10),
+                          a!richTextItem(
+                            text: rule!HR_GetPermanentVacanciesCount(),
+                            size: "LARGE",
+                            style: "STRONG",
+                            color: "POSITIVE"
+                          )
+                        },
+                        align: "CENTER"
+                      )
+                    },
+                    style: "SUCCESS",
+                    height: "SHORT"
+                  )
+                },
+                width: "NARROW"
+              )
+            },
+            marginBelow: "STANDARD"
+          ),
+          
+          /* Second Row of KPI Cards */
+          a!columnsLayout(
+            columns: {
+              a!columnLayout(
+                contents: {
+                  a!cardLayout(
+                    contents: {
+                      a!richTextDisplayField(
+                        value: {
+                          a!richTextItem(
+                            text: "Open Regular Positions",
+                            size: "MEDIUM",
+                            style: "STRONG"
+                          ),
+                          char(10),
+                          a!richTextItem(
+                            text: rule!HR_GetRegularOpenPositionsCount(),
+                            size: "LARGE",
+                            style: "STRONG",
+                            color: "POSITIVE"
+                          )
+                        },
+                        align: "CENTER"
+                      )
+                    },
+                    style: "SUCCESS",
+                    height: "SHORT"
+                  )
+                },
+                width: "MEDIUM"
+              ),
+              a!columnLayout(
+                contents: {
+                  a!cardLayout(
+                    contents: {
+                      a!richTextDisplayField(
+                        value: {
+                          a!richTextItem(
+                            text: "Open Contract Positions",
+                            size: "MEDIUM",
+                            style: "STRONG"
+                          ),
+                          char(10),
+                          a!richTextItem(
+                            text: rule!HR_GetContractOpenPositionsCount(),
+                            size: "LARGE",
+                            style: "STRONG",
+                            color: "ACCENT"
+                          )
+                        },
+                        align: "CENTER"
+                      )
+                    },
+                    style: "ACCENT",
+                    height: "SHORT"
+                  )
+                },
+                width: "MEDIUM"
+              ),
+              a!columnLayout(
+                contents: {},
+                width: "MEDIUM"
+              )
+            },
+            marginBelow: "EXTRA_LARGE"
+          ),
+          
+          /* ===== BODY SECTION - TWO COLUMN LAYOUT ===== */
+          a!columnsLayout(
+            columns: {
+              /* LEFT COLUMN - Job Cards Grid */
+              a!columnLayout(
+                contents: {
+                  a!richTextDisplayField(
+                    value: a!richTextItem(
+                      text: "Available Job Positions",
+                      size: "LARGE",
+                      style: "STRONG"
+                    ),
+                    marginBelow: "STANDARD"
+                  ),
+                  
+                  /* First Row of Job Cards */
+                  a!columnsLayout(
+                    columns: {
+                      a!columnLayout(
+                        contents: {
+                          a!cardLayout(
+                            contents: {
+                              a!richTextDisplayField(
+                                value: {
+                                  a!richTextItem(
+                                    text: index(rule!HR_GetJobPositions(), 1, {}).jobName,
+                                    size: "MEDIUM",
+                                    style: "STRONG"
+                                  ),
+                                  char(10),
+                                  a!richTextItem(
+                                    text: "Vacancies: " & index(rule!HR_GetJobPositions(), 1, {}).vacancyCount,
+                                    size: "SMALL",
+                                    color: "SECONDARY"
+                                  )
+                                },
+                                marginBelow: "STANDARD"
+                              ),
+                              a!buttonWidget(
+                                label: "Apply for Job",
+                                style: "PRIMARY",
+                                size: "SMALL",
+                                saveInto: {
+                                  a!startProcess(
+                                    processModel: cons!HR_JOB_APPLICATION_PROCESS,
+                                    processParameters: {
+                                      jobId: index(rule!HR_GetJobPositions(), 1, {}).jobId
+                                    }
+                                  )
+                                }
+                              )
+                            },
+                            style: "NONE",
+                            height: "MEDIUM"
+                          )
+                        },
+                        width: "NARROW"
+                      ),
+                      a!columnLayout(
+                        contents: {
+                          a!cardLayout(
+                            contents: {
+                              a!richTextDisplayField(
+                                value: {
+                                  a!richTextItem(
+                                    text: index(rule!HR_GetJobPositions(), 2, {}).jobName,
+                                    size: "MEDIUM",
+                                    style: "STRONG"
+                                  ),
+                                  char(10),
+                                  a!richTextItem(
+                                    text: "Vacancies: " & index(rule!HR_GetJobPositions(), 2, {}).vacancyCount,
+                                    size: "SMALL",
+                                    color: "SECONDARY"
+                                  )
+                                },
+                                marginBelow: "STANDARD"
+                              ),
+                              a!buttonWidget(
+                                label: "Apply for Job",
+                                style: "PRIMARY",
+                                size: "SMALL",
+                                saveInto: {
+                                  a!startProcess(
+                                    processModel: cons!HR_JOB_APPLICATION_PROCESS,
+                                    processParameters: {
+                                      jobId: index(rule!HR_GetJobPositions(), 2, {}).jobId
+                                    }
+                                  )
+                                }
+                              )
+                            },
+                            style: "NONE",
+                            height: "MEDIUM"
+                          )
+                        },
+                        width: "NARROW"
+                      ),
+                      a!columnLayout(
+                        contents: {
+                          a!cardLayout(
+                            contents: {
+                              a!richTextDisplayField(
+                                value: {
+                                  a!richTextItem(
+                                    text: index(rule!HR_GetJobPositions(), 3, {}).jobName,
+                                    size: "MEDIUM",
+                                    style: "STRONG"
+                                  ),
+                                  char(10),
+                                  a!richTextItem(
+                                    text: "Vacancies: " & index(rule!HR_GetJobPositions(), 3, {}).vacancyCount,
+                                    size: "SMALL",
+                                    color: "SECONDARY"
+                                  )
+                                },
+                                marginBelow: "STANDARD"
+                              ),
+                              a!buttonWidget(
+                                label: "Apply for Job",
+                                style: "PRIMARY",
+                                size: "SMALL",
+                                saveInto: {
+                                  a!startProcess(
+                                    processModel: cons!HR_JOB_APPLICATION_PROCESS,
+                                    processParameters: {
+                                      jobId: index(rule!HR_GetJobPositions(), 3, {}).jobId
+                                    }
+                                  )
+                                }
+                              )
+                            },
+                            style: "NONE",
+                            height: "MEDIUM"
+                          )
+                        },
+                        width: "NARROW"
+                      )
+                    },
+                    marginBelow: "STANDARD"
+                  ),
+                  
+                  /* Second Row of Job Cards */
+                  a!columnsLayout(
+                    columns: {
+                      a!columnLayout(
+                        contents: {
+                          a!cardLayout(
+                            contents: {
+                              a!richTextDisplayField(
+                                value: {
+                                  a!richTextItem(
+                                    text: index(rule!HR_GetJobPositions(), 4, {}).jobName,
+                                    size: "MEDIUM",
+                                    style: "STRONG"
+                                  ),
+                                  char(10),
+                                  a!richTextItem(
+                                    text: "Vacancies: " & index(rule!HR_GetJobPositions(), 4, {}).vacancyCount,
+                                    size: "SMALL",
+                                    color: "SECONDARY"
+                                  )
+                                },
+                                marginBelow: "STANDARD"
+                              ),
+                              a!buttonWidget(
+                                label: "Apply for Job",
+                                style: "PRIMARY",
+                                size: "SMALL",
+                                saveInto: {
+                                  a!startProcess(
+                                    processModel: cons!HR_JOB_APPLICATION_PROCESS,
+                                    processParameters: {
+                                      jobId: index(rule!HR_GetJobPositions(), 4, {}).jobId
+                                    }
+                                  )
+                                }
+                              )
+                            },
+                            style: "NONE",
+                            height: "MEDIUM"
+                          )
+                        },
+                        width: "NARROW"
+                      ),
+                      a!columnLayout(
+                        contents: {
+                          a!cardLayout(
+                            contents: {
+                              a!richTextDisplayField(
+                                value: {
+                                  a!richTextItem(
+                                    text: index(rule!HR_GetJobPositions(), 5, {}).jobName,
+                                    size: "MEDIUM",
+                                    style: "STRONG"
+                                  ),
+                                  char(10),
+                                  a!richTextItem(
+                                    text: "Vacancies: " & index(rule!HR_GetJobPositions(), 5, {}).vacancyCount,
+                                    size: "SMALL",
+                                    color: "SECONDARY"
+                                  )
+                                },
+                                marginBelow: "STANDARD"
+                              ),
+                              a!buttonWidget(
+                                label: "Apply for Job",
+                                style: "PRIMARY",
+                                size: "SMALL",
+                                saveInto: {
+                                  a!startProcess(
+                                    processModel: cons!HR_JOB_APPLICATION_PROCESS,
+                                    processParameters: {
+                                      jobId: index(rule!HR_GetJobPositions(), 5, {}).jobId
+                                    }
+                                  )
+                                }
+                              )
+                            },
+                            style: "NONE",
+                            height: "MEDIUM"
+                          )
+                        },
+                        width: "NARROW"
+                      ),
+                      a!columnLayout(
+                        contents: {
+                          a!cardLayout(
+                            contents: {
+                              a!richTextDisplayField(
+                                value: {
+                                  a!richTextItem(
+                                    text: index(rule!HR_GetJobPositions(), 6, {}).jobName,
+                                    size: "MEDIUM",
+                                    style: "STRONG"
+                                  ),
+                                  char(10),
+                                  a!richTextItem(
+                                    text: "Vacancies: " & index(rule!HR_GetJobPositions(), 6, {}).vacancyCount,
+                                    size: "SMALL",
+                                    color: "SECONDARY"
+                                  )
+                                },
+                                marginBelow: "STANDARD"
+                              ),
+                              a!buttonWidget(
+                                label: "Apply for Job",
+                                style: "PRIMARY",
+                                size: "SMALL",
+                                saveInto: {
+                                  a!startProcess(
+                                    processModel: cons!HR_JOB_APPLICATION_PROCESS,
+                                    processParameters: {
+                                      jobId: index(rule!HR_GetJobPositions(), 6, {}).jobId
+                                    }
+                                  )
+                                }
+                              )
+                            },
+                            style: "NONE",
+                            height: "MEDIUM"
+                          )
+                        },
+                        width: "NARROW"
+                      )
+                    }
+                  )
+                },
+                width: "WIDE"
+              ),
+              
+              /* RIGHT COLUMN - Action Cards */
+              a!columnLayout(
+                contents: {
+                  a!richTextDisplayField(
+                    value: a!richTextItem(
+                      text: "Quick Actions",
+                      size: "LARGE",
+                      style: "STRONG"
+                    ),
+                    marginBelow: "STANDARD"
+                  ),
+                  
+                  /* Bulk Upload Card */
+                  a!cardLayout(
+                    contents: {
+                      a!richTextDisplayField(
+                        value: {
+                          a!richTextItem(
+                            text: "Bulk Upload",
+                            size: "LARGE",
+                            style: "STRONG"
+                          ),
+                          char(10),
+                          a!richTextItem(
+                            text: "Upload multiple job applications or employee data",
+                            size: "SMALL",
+                            color: "SECONDARY"
+                          )
+                        },
+                        align: "CENTER",
+                        marginBelow: "STANDARD"
+                      ),
+                      a!fileUploadField(
+                        label: "Select Files",
+                        target: cons!HR_BULK_UPLOAD_FOLDER,
+                        maxSelections: 10,
+                        buttonStyle: "SECONDARY"
+                      ),
+                      a!buttonWidget(
+                        label: "Process Upload",
+                        style: "PRIMARY",
+                        size: "MEDIUM",
+                        width: "FILL",
+                        saveInto: {
+                          a!startProcess(
+                            processModel: cons!HR_BULK_UPLOAD_PROCESS
+                          )
+                        },
+                        marginAbove: "STANDARD"
+                      )
+                    },
+                    style: "INFO",
+                    height: "MEDIUM",
+                    marginBelow: "STANDARD"
+                  ),
+                  
+                  /* Record Chatbot Card 1 */
+                  a!cardLayout(
+                    contents: {
+                      a!richTextDisplayField(
+                        value: {
+                          a!richTextItem(
+                            text: "HR Assistant Chatbot",
+                            size: "LARGE",
+                            style: "STRONG"
+                          ),
+                          char(10),
+                          a!richTextItem(
+                            text: "Get instant help with HR policies and procedures",
+                            size: "SMALL",
+                            color: "SECONDARY"
+                          )
+                        },
+                        align: "CENTER",
+                        marginBelow: "STANDARD"
+                      ),
+                      a!buttonWidget(
+                        label: "Start Chat",
+                        style: "SECONDARY",
+                        size: "MEDIUM",
+                        width: "FILL",
+                        saveInto: {
+                          a!startProcess(
+                            processModel: cons!HR_CHATBOT_PROCESS,
+                            processParameters: {
+                              chatbotType: "HR_ASSISTANT"
+                            }
+                          )
+                        }
+                      )
+                    },
+                    style: "SUCCESS",
+                    height: "MEDIUM",
+                    marginBelow: "STANDARD"
+                  ),
+                  
+                  /* Record Chatbot Card 2 */
+                  a!cardLayout(
+                    contents: {
+                      a!richTextDisplayField(
+                        value: {
+                          a!richTextItem(
+                            text: "Recruitment Chatbot",
+                            size: "LARGE",
+                            style: "STRONG"
+                          ),
+                          char(10),
+                          a!richTextItem(
+                            text: "Get guidance on recruitment processes and job applications",
+                            size: "SMALL",
+                            color: "SECONDARY"
+                          )
+                        },
+                        align: "CENTER",
+                        marginBelow: "STANDARD"
+                      ),
+                      a!buttonWidget(
+                        label: "Start Chat",
+                        style: "SECONDARY",
+                        size: "MEDIUM",
+                        width: "FILL",
+                        saveInto: {
+                          a!startProcess(
+                            processModel: cons!HR_CHATBOT_PROCESS,
+                            processParameters: {
+                              chatbotType: "RECRUITMENT_ASSISTANT"
+                            }
+                          )
+                        }
+                      )
+                    },
+                    style: "ACCENT",
+                    height: "MEDIUM"
+                  )
+                },
+                width: "NARROW"
+              )
+            }
+          )
+        }
+      )
+    }
+  )
+}
